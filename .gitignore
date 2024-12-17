@@ -8,6 +8,8 @@
 *.exe
 .vscode/
 *[Tt][Ee][Ss][Tt]*
+[Bb]uild/
+
 
 # User-specific files
 *.rsuser
