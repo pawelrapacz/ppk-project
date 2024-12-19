@@ -1,6 +1,8 @@
 #include "clipper.hpp"
 #include <string>
 #include <iostream>
+#include <iomanip>
+#include <cmath>
 #include "Population.h"
 
 
@@ -41,14 +43,17 @@ int main(int argc, char** argv) {
         uint32_t sum { };
         for (auto& i : gnm)
             sum += i;
-        
-        return sum / (gnm.size() * 100);
+
+        double r =  (std::sin(sum) + std::sin(gnm.size())) / 4 + 0.5;
+        // std::cout << r << std::endl;
+        return r;
     };
 
-    Population sample(r, w, k, p);
+    Population sample;
     read_population(infile, sample);
-    sample.simulate();
+    sample.simulate(r, w, k, p, fitness);
     write_population(outfile, sample);
 
+    // std::cin.get();
     return 0;
 }
