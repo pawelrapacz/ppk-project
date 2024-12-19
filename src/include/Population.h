@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Phenotype.h"
-#include <string>
 #include <cstdint>
 #include <vector>
 #include <filesystem>
@@ -11,33 +10,33 @@
 
 class Population
 {
+using index_t = std::size_t;
+using fitness_func = double (*)(const genome_t&);
+using populationvec_t = std::vector<Phenotype>;
+
 private:
-    std::vector<Phenotype> _ppltn;
+    populationvec_t _ppltn;
+    std::vector<index_t> _breeding;
 
 public:
     const std::vector<Phenotype>& population = _ppltn;
-    const double R;
-    const double W;
-    const uint32_t K;
-    const uint32_t P;
+
 
 public:
-    Population(double r, double w, uint32_t k, uint32_t p);
+    Population() = default;
     ~Population() = default;
 
-    void simulate();
+    void simulate(double br_thr, double ex_thr, uint32_t pairs, uint32_t generations, fitness_func f);
 
 private:
-    void breed();
+    void selection(fitness_func f, const double& br_thr, const double& ex_thr);
+    void breed(uint32_t n, Population& newgen) const;
+    void determine_breeding_phenotypes(index_t first_ph = 0);
 
 
     friend void read_population(std::ifstream& file, Population& p);
     friend void read_population(const std::filesystem::path& file, Population& p);
-    friend void read_population(const std::string& file, Population& p);
-    friend void read_population(const char* file, Population& p);
 
     friend void write_population(std::ofstream& file, const Population& p);
     friend void write_population(const std::filesystem::path& file, const Population& p);
-    friend void write_population(const std::string& file, const Population& p);
-    friend void write_population(const char* file, const Population& p);
 };
