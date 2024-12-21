@@ -1,3 +1,11 @@
+/**
+ * \file Phenotype.cpp
+ * \brief Implementation for class \ref Phenotype
+ * \author Paweł Rapacz
+ * \date 12-2024
+ */
+
+
 #include "Phenotype.h"
 #include <cmath>
 #include <random>
@@ -13,7 +21,6 @@ Phenotype::Phenotype(std::string_view genome) {
 }
 
 
-
 Phenotype::Phenotype(genome_frac genome1, genome_frac genome2) {
     std::ptrdiff_t genome1_len = genome1.second - genome1.first;
     std::ptrdiff_t genome2_len = genome2.second - genome2.first;
@@ -23,13 +30,11 @@ Phenotype::Phenotype(genome_frac genome1, genome_frac genome2) {
 }
 
 
-
 genome_frac Phenotype::frac_front() const {
     static std::default_random_engine rand(std::chrono::system_clock::now().time_since_epoch().count());
     std::uniform_int_distribution<> range(1, _gnm.size() - 1);
     return {_gnm.cbegin(), _gnm.cbegin() + range(rand)};
 }
-
 
 
 genome_frac Phenotype::frac_back() const {
@@ -39,19 +44,17 @@ genome_frac Phenotype::frac_back() const {
 }
 
 
-
 const genome_t &Phenotype::genome() const noexcept
 { return _gnm; }
-
 
 
 adapt Phenotype::adapt() const noexcept
 { return _adapt; }
 
 
-
 void Phenotype::adapt(::adapt a) noexcept
 { _adapt = a; }
+
 
 void Phenotype::operator=(::adapt a) noexcept
 { adapt(a); }

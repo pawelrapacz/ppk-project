@@ -1,5 +1,12 @@
-#include "Population.h"
+/**
+ * \file Population.cpp
+ * \brief Implementation for class \ref Population and its friend functions
+ * \author Paweł Rapacz
+ * \date 12-2024
+ */
 
+
+#include "Population.h"
 #include <cstdint>
 #include <string>
 #include <filesystem>
@@ -31,7 +38,6 @@ void Population::simulate(double br_thr, double ex_thr, uint32_t pairs, uint32_t
 }
 
 
-
 void Population::selection(fitness_func f, const double& br_thr, const double& ex_thr) {
     double ftns;
     for (auto& indv : _ppltn) {
@@ -47,7 +53,6 @@ void Population::selection(fitness_func f, const double& br_thr, const double& e
 
     std::erase_if(_ppltn, [](const Phenotype& p) -> bool { return adapt::dead == p.adapt(); });
 }
-
 
 
 void Population::breed(uint32_t n, Population& ng) const {
@@ -68,13 +73,11 @@ void Population::breed(uint32_t n, Population& ng) const {
 }
 
 
-
 void Population::determine_breeding_phenotypes(index_t first_ph) {
     for (auto i = first_ph; i < _ppltn.size(); i++)
         if (adapt::breed == _ppltn[i].adapt())
             _breeding.push_back(i);
 }
-
 
 
 void read_population(std::ifstream& file, Population& p) {
@@ -87,13 +90,11 @@ void read_population(std::ifstream& file, Population& p) {
 }
 
 
-
 void read_population(const std::filesystem::path& path, Population& p) {
     std::ifstream __file(path);
     read_population(__file, p);
     __file.close();
 }
-
 
 
 void write_population(std::ofstream& file, const Population& p) {
@@ -105,7 +106,6 @@ void write_population(std::ofstream& file, const Population& p) {
         file << '\n';
     }
 }
-
 
 
 void write_population(const std::filesystem::path& path, const Population& p) {

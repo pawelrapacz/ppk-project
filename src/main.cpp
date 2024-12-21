@@ -1,3 +1,10 @@
+/**
+ * \file main.cpp
+ * \author Paweł Rapacz
+ * \date 12-2024
+ */
+
+
 #include "clipper.hpp"
 #include <string>
 #include <iostream>
