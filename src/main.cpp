@@ -13,6 +13,18 @@
 #include "clipper.hpp"
 
 
+
+/**
+ * @brief Entry point for the Darwin simulation program.
+ *
+ * Parses command-line arguments, reads the input population, performs 
+ * evolutionary simulation, and writes the results to an output file (and optionally to stdout).
+ *
+ * @param argc Number of command-line arguments.
+ * @param argv Array of command-line arguments.
+ * @return Exit status: 0 on success, non-zero on error.
+ */
+
 int main(int argc, char** argv) {
     SetConsoleOutputCP(CP_UTF8);
 
@@ -42,6 +54,5 @@ int main(int argc, char** argv) {
     if (options.writeout)
         write_population(&std::cout, sample);
     
-    std::cin.get();
     return 0;
 }

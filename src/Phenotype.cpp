@@ -1,6 +1,6 @@
 /**
  * \file Phenotype.cpp
- * \brief Implementation for class \ref Phenotype
+ * \brief Implementation for class \c Phenotype
  * \author Paweł Rapacz
  * \date 12-2024
  */
@@ -53,4 +53,3 @@ Adapt Phenotype::adapt() const noexcept
 
 void Phenotype::adapt(Adapt a) noexcept
 { _adapt = a; }
-

@@ -1,6 +1,6 @@
 /**
  * \file Population.cpp
- * \brief Implementation for class \ref Population and its friend functions
+ * \brief Implementation for class \c Population and its friend functions
  * \author Paweł Rapacz
  * \date 12-2024
  */
@@ -25,7 +25,7 @@ Population &Population::operator+=(const Population &other) {
 Population &Population::operator+=(const PopulationVec &range) {
     std::size_t prevlen = _data.size();
     _data.insert(_data.end(), range.begin(), range.end());
-    determine_breeding_phenotypes(prevlen);
+    determine_breeding(prevlen);
     return *this;
 }
 
@@ -97,7 +97,7 @@ Population Population::perform_breeding(std::size_t pairs) const {
 }
 
 
-void Population::determine_breeding_phenotypes(Index first_ph) {
+void Population::determine_breeding(Index first_ph) {
     for (auto i = first_ph; i < _data.size(); i++)
         if (Adapt::breed == _data[i].adapt())
             _br.push_back(i);

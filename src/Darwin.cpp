@@ -64,7 +64,7 @@ int handle_parsing_errors(int argc, const CLI::clipper& cli) {
 
 
     for (auto& i : cli.wrong)
-        std::cout << i << "\n";
+        std::cout << i << '\n';
 
     return 1;
 }
@@ -72,7 +72,7 @@ int handle_parsing_errors(int argc, const CLI::clipper& cli) {
 
 void simulate_evolution(double br_thr, double ex_thr, uint32_t pairs, uint32_t generations, FitnessFunction f, Population& population) {
     population.perform_selection(f, br_thr, ex_thr);
-    population.determine_breeding_phenotypes();
+    population.determine_breeding();
 
     if (population.get_breeding().size() < 2)
         return;

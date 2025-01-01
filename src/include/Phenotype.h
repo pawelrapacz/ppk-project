@@ -1,6 +1,6 @@
 /**
  * \file Phenotype.h
- * \brief Declaration for class \ref Phenotype and other utilities
+ * \brief Declaration for class \c Phenotype and other utilities
  * \author Paweł Rapacz
  * \date 12-2024
  */
@@ -24,10 +24,10 @@ using GenomeFrac = std::pair<Genome::const_iterator, Genome::const_iterator>; //
 /**
  * \brief Holds information about \ref Phenotype "Phenotype's" adaptation
  * 
- * Adaptation should be determined by the result of a \ref Population::FitnessFunction "fitness function",
+ * Adaptation should be determined by the result of a \ref FitnessFunction "fitness function",
  * according to breeding and extinction thresholds. 
  * 
- * \see Phenotype Population Population::FitnessFunction
+ * \see Phenotype Population FitnessFunction
  */
 enum class Adapt {
     breed,      ///< Phenotype remains in the population, and will breed
@@ -45,10 +45,10 @@ enum class Adapt {
  * This class stores data related to the phenotype's adaptation status and its genome.
  * It also provides functionality to manipulate the adaptation status and split the genome into fragments.
  *
- * \li **Adaptation:** Each phenotype has an adaptation status represented by the \ref adapt enum.
- * \li **Genome:** The genome is stored as a \ref Genome type and can be divided into fragments (\ref frac_front(), \ref frac_back()).
+ * \li **Adaptation:** Each phenotype has an adaptation status represented by the \c Adapt enum.
+ * \li **Genome:** The genome is stored as a \c Genome type and can be divided into fragments (\c frac_front(), \c frac_back()).
  *
- * \see Population adapt Genome GenomeFrac
+ * \see Population Adapt Genome GenomeFrac
  */
 class Phenotype
 {
@@ -76,16 +76,16 @@ public:
 
 
     /**
-     * \brief 
-     * \return fraction of genome (chromosome) starting at the begining and ending in a random place
+     * \brief Creates a \c GenomeFrac starting at the begining and ending at a random Gene
+     * \return fraction of Genome (chromosome) starting at the begining and ending in a random place
      * \see GenomeFrac
      */
     GenomeFrac frac_front() const;
 
 
     /**
-     * \brief 
-     * \return fraction of genome (chromosome) starting in a random place and ending at the back
+     * \brief Creates a \c GenomeFrac starting at a random Gene and ending at the last one
+     * \return fraction of Genome (chromosome) starting in a random place and ending at the back
      * \see GenomeFrac
      */
     GenomeFrac frac_back() const;
@@ -102,14 +102,14 @@ public:
     /**
      * \brief Gets object's adaptation value
      * \return object's adaptation
-     * \see adapt
+     * \see Adapt
      */
     Adapt adapt() const noexcept;
 
 
     /**
      * \brief Sets object's adaptation value
-     * \see adapt
+     * \see Adapt
      */
     void adapt(Adapt a) noexcept;
 };
