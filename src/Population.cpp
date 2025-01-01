@@ -74,6 +74,8 @@ void Population::perform_breeding(std::size_t pairs, Population& other) const {
     static std::default_random_engine rand(std::chrono::system_clock::now().time_since_epoch().count());
     std::uniform_int_distribution<std::size_t> range(0, _br.size() - 1);
 
+    other._data.reserve(pairs);
+
     for (auto i = 0; i < pairs; i++) {
         Index first = _br[range(rand)];
         Index second = _br[range(rand)];
@@ -89,23 +91,8 @@ void Population::perform_breeding(std::size_t pairs, Population& other) const {
 
 
 Population Population::perform_breeding(std::size_t pairs) const {
-    static std::default_random_engine rand(std::chrono::system_clock::now().time_since_epoch().count());
-    std::uniform_int_distribution<std::size_t> range(0, _br.size() - 1);
-
     Population newp;
-
-    for (auto i = 0; i < pairs; i++) {
-        Index first = _br[range(rand)];
-        Index second = _br[range(rand)];
-
-        if (first == second) {
-            i--;
-            continue;
-        }
-
-        newp._data.emplace_back(_data[first].frac_front(), _data[second].frac_back());
-    }
-
+    perform_breeding(pairs, newp);
     return newp;
 }
 
