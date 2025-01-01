@@ -15,32 +15,41 @@
 
 int main(int argc, char** argv) {
     CLI::clipper cli;
-    cli.name("Darwin");
-    cli.author("Paweł Rapacz");
+
+    cli.name("Darwin").author("Paweł Rapacz");
 
     std::string infile, outfile;
-    int k, p;
-    float w, r;
+    unsigned k, p;
+    double w, r;
+
+
     cli.add_option<std::string>("--input", "-i").set("file", infile).doc("Input file").req();
     cli.add_option<std::string>("--output", "-o").set("file", outfile).doc("Output file").req();
-    cli.add_option<float>("-w").set("float", w).doc("Extinction threshold").req();
-    cli.add_option<float>("-r").set("float", r).doc("Breeding threshold").req();
-    cli.add_option<int>("-p").set("int", k).doc("Number of generations").req();
-    cli.add_option<int>("-k").set("int", p).doc("Number of pairs of individuals drawn for breeding").req();
+
+    namespace pred = CLI::pred;
+    cli.add_option<double>("-w")
+        .set("float", w)
+        .doc("Extinction threshold")
+        .require("in range [0; 1]", pred::ibetween<0., 1.>)
+        .req();
+
+    cli.add_option<double>("-r")
+        .set("float", r)
+        .doc("Breeding threshold")
+        .require("in range [0; 1]", pred::ibetween<0., 1.>)
+        .req();
+
+    cli.add_option<unsigned>("-p").set("int", k).doc("Number of generations").req();
+    cli.add_option<unsigned>("-k").set("int", p).doc("Number of pairs of individuals drawn for breeding").req();
 
     if (1 == argc) {
         std::cout << cli.make_help();
         return 0;
     }
 
-    if (not cli.parse(argc, argv))
-        return 1;
-
-    if (not cli.wrong.empty()) {
-        for (auto& i : cli.wrong) {
+    if (not cli.parse(argc, argv) or not cli.wrong.empty()) {
+        for (auto& i : cli.wrong)
             std::cout << i << '\n';
-            std::cout.flush();
-        }
         return 1;
     }
 
