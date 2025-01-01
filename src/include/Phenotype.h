@@ -72,7 +72,7 @@ public:
      * \param genome2 faction of a chromosome (pair of pointers)
      * \see GenomeFrac frac_front() frac_back()
      */
-    Phenotype(GenomeFrac genome1, GenomeFrac genome2);
+    Phenotype(const GenomeFrac& genome1, const GenomeFrac& genome2);
 
 
     /**

@@ -20,7 +20,7 @@ Phenotype::Phenotype(std::string_view genome) {
 }
 
 
-Phenotype::Phenotype(GenomeFrac genome1, GenomeFrac genome2) {
+Phenotype::Phenotype(const GenomeFrac& genome1, const GenomeFrac& genome2) {
     std::ptrdiff_t genome1_len = genome1.second - genome1.first;
     std::ptrdiff_t genome2_len = genome2.second - genome2.first;
     _gnm.reserve(genome1_len + genome2_len);
