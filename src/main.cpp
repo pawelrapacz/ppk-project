@@ -4,58 +4,27 @@
  * \date 12-2024
  */
 
-
-#include "clipper.hpp"
+#include <windows.h>
 #include <string>
 #include <iostream>
 #include <iomanip>
 #include <cmath>
-#include "Population.h"
+#include "Darwin.h"
+#include "clipper.hpp"
 
 
 int main(int argc, char** argv) {
+    SetConsoleOutputCP(CP_UTF8);
+
     CLI::clipper cli;
+    DarwinArgs options;
+    init_args(options, cli);
 
-    cli.name("Darwin").author("Paweł Rapacz");
-
-    std::string infile, outfile;
-    unsigned k, p;
-    double w, r;
-
-
-    cli.add_option<std::string>("--input", "-i").set("file", infile).doc("Input file").req();
-    cli.add_option<std::string>("--output", "-o").set("file", outfile).doc("Output file").req();
-
-    namespace pred = CLI::pred;
-    cli.add_option<double>("-w")
-        .set("float", w)
-        .doc("Extinction threshold")
-        .require("in range [0; 1]", pred::ibetween<0., 1.>)
-        .req();
-
-    cli.add_option<double>("-r")
-        .set("float", r)
-        .doc("Breeding threshold")
-        .require("in range [0; 1]", pred::ibetween<0., 1.>)
-        .req();
-
-    cli.add_option<unsigned>("-p").set("int", k).doc("Number of generations").req();
-    cli.add_option<unsigned>("-k").set("int", p).doc("Number of pairs of individuals drawn for breeding").req();
-
-    if (1 == argc) {
-        std::cout << cli.make_help();
-        return 0;
-    }
-
-    if (not cli.parse(argc, argv) or not cli.wrong.empty()) {
-        for (auto& i : cli.wrong)
-            std::cout << i << '\n';
-        return 1;
-    }
+    if (!cli.parse(argc, argv)) // parse arguments
+        return handle_parsing_errors(argc, cli);
 
 
-
-    auto fitness = [](const genome_t& gnm) -> double {
+    auto fitness = [](const Genome& gnm) -> double {
         uint32_t sum { };
         for (auto& i : gnm)
             sum += i;
@@ -66,10 +35,13 @@ int main(int argc, char** argv) {
     };
 
     Population sample;
-    read_population(infile, sample);
-    sample.simulate(r, w, k, p, fitness);
-    write_population(outfile, sample);
-
-    // std::cin.get();
+    read_population(options.infile, sample);
+    simulate_evolution(options.r, options.w, options.k, options.p, fitness, sample);
+    write_population(options.outfile, sample);
+    
+    if (options.writeout)
+        write_population(&std::cout, sample);
+    
+    std::cin.get();
     return 0;
 }

@@ -6,6 +6,7 @@ set(SOURCE_FILES
     src/main.cpp
     src/Phenotype.cpp
     src/Population.cpp
+    src/Darwin.cpp
 )
 
 
