@@ -74,9 +74,10 @@ void read_population(std::istream *stream, Population& p);
  * \headerfile ""
  * \param[in] path Path to file to read from
  * \param[out] p population reference to read the file contents to
+ * \return True if successful, false if accessing file does not exist
  * \see Population
  */
-void read_population(const std::filesystem::path& path, Population& p);
+bool read_population(const std::filesystem::path& path, Population& p);
 
 
 /**

@@ -5,10 +5,8 @@
  */
 
 #include <windows.h>
-#include <string>
-#include <iostream>
-#include <iomanip>
 #include <cmath>
+#include <iostream>
 #include "Darwin.h"
 #include "clipper.hpp"
 
@@ -46,11 +44,17 @@ int main(int argc, char** argv) {
         return r;
     };
 
+
     Population sample;
-    read_population(options.infile, sample);
+    
+    if (!read_population(options.infile, sample)) {
+        std::clog << "Cannot access file: No such file [" << options.infile << "]\n";
+        return 1;
+    }
+
     simulate_evolution(options.r, options.w, options.k, options.p, fitness, sample);
     write_population(options.outfile, sample);
-    
+
     if (options.writeout)
         write_population(&std::cout, sample);
     

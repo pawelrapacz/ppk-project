@@ -90,7 +90,8 @@ void simulate_evolution(double br_thr, double ex_thr, uint32_t pairs, uint32_t g
 
 
 void read_population(std::istream *stream, Population &p) {
-    if (!*stream) throw 10;
+    if (!*stream)
+        return;
 
     std::string genome;
     while (std::getline(*stream, genome))
@@ -99,15 +100,19 @@ void read_population(std::istream *stream, Population &p) {
 }
 
 
-void read_population(const std::filesystem::path& path, Population& p) {
+bool read_population(const std::filesystem::path& path, Population& p) {
+    if (!std::filesystem::is_regular_file(path))
+        return false;
     std::ifstream file(path);
     read_population(&file, p);
     file.close();
+    return true;
 }
 
 
 void write_population(std::ostream *stream, const Population& p) {
-    if (!*stream) throw 10;
+    if (!*stream)
+        return;
 
     for (auto& i : p.get_population()) {
         for (Gene g : i.genome())
