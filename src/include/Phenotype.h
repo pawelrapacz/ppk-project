@@ -15,21 +15,21 @@
 
 
 
-using gene_t = uint16_t; ///< Type for a gene
-using genome_t = std::vector<gene_t>; ///< Type for a genome (chromosome) of multiple \ref gene_t "genes"
-using genome_frac = std::pair<genome_t::const_iterator, genome_t::const_iterator>; ///< Type that contains a fraction of a \ref genome_t
+using Gene = uint16_t; ///< Type for a gene
+using Genome = std::vector<Gene>; ///< Type for a genome (chromosome) of multiple \ref Gene "genes"
+using GenomeFrac = std::pair<Genome::const_iterator, Genome::const_iterator>; ///< Type that contains a fraction of a \ref Genome
 
 
 
 /**
  * \brief Holds information about \ref Phenotype "Phenotype's" adaptation
  * 
- * Adaptation should be determined by the result of a \ref Population::fitness_func "fitness function",
+ * Adaptation should be determined by the result of a \ref Population::FitnessFunction "fitness function",
  * according to breeding and extinction thresholds. 
  * 
- * \see Phenotype Population Population::fitness_func
+ * \see Phenotype Population Population::FitnessFunction
  */
-enum class adapt {
+enum class Adapt {
     breed,      ///< Phenotype remains in the population, and will breed
     nobreed,    ///< Phenotype remains in the population, but will not breed
     dead        ///< Phenotype will be remved from the population
@@ -46,15 +46,15 @@ enum class adapt {
  * It also provides functionality to manipulate the adaptation status and split the genome into fragments.
  *
  * \li **Adaptation:** Each phenotype has an adaptation status represented by the \ref adapt enum.
- * \li **Genome:** The genome is stored as a \ref genome_t type and can be divided into fragments (\ref frac_front(), \ref frac_back()).
+ * \li **Genome:** The genome is stored as a \ref Genome type and can be divided into fragments (\ref frac_front(), \ref frac_back()).
  *
- * \see Population adapt genome_t genome_frac
+ * \see Population adapt Genome GenomeFrac
  */
 class Phenotype
 {
 private:
-    adapt _adapt; ///< Phenotype's adaptation
-    genome_t _gnm; ///< Phenotype's genome (chromosome)
+    Adapt _adapt; ///< Phenotype's adaptation
+    Genome _gnm; ///< Phenotype's genome (chromosome)
 
 
 public:
@@ -70,33 +70,33 @@ public:
      * \brief constructor
      * \param genome1 faction of a chromosome (pair of pointers)
      * \param genome2 faction of a chromosome (pair of pointers)
-     * \see genome_frac frac_front() frac_back()
+     * \see GenomeFrac frac_front() frac_back()
      */
-    Phenotype(genome_frac genome1, genome_frac genome2);
+    Phenotype(GenomeFrac genome1, GenomeFrac genome2);
 
 
     /**
      * \brief 
      * \return fraction of genome (chromosome) starting at the begining and ending in a random place
-     * \see genome_frac
+     * \see GenomeFrac
      */
-    genome_frac frac_front() const;
+    GenomeFrac frac_front() const;
 
 
     /**
      * \brief 
      * \return fraction of genome (chromosome) starting in a random place and ending at the back
-     * \see genome_frac
+     * \see GenomeFrac
      */
-    genome_frac frac_back() const;
+    GenomeFrac frac_back() const;
 
 
     /**
      * \brief Acesses objects's genome
      * \return const reference to object's genome
-     * \see genome_t
+     * \see Genome
      */
-    const genome_t& genome() const noexcept;
+    const Genome& genome() const noexcept;
 
 
     /**
@@ -104,19 +104,12 @@ public:
      * \return object's adaptation
      * \see adapt
      */
-    adapt adapt() const noexcept;
+    Adapt adapt() const noexcept;
 
 
     /**
      * \brief Sets object's adaptation value
      * \see adapt
      */
-    void adapt(::adapt a) noexcept;
-
-
-    /**
-     * \brief Sets object's adaptation value
-     * \see adapt
-     */
-    void operator=(::adapt a) noexcept;
+    void adapt(Adapt a) noexcept;
 };

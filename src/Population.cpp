@@ -8,108 +8,110 @@
 
 #include "Population.h"
 #include <cstdint>
-#include <string>
-#include <filesystem>
-#include <fstream>
-#include <regex>
 #include <random>
 #include <chrono>
 
 
 
-void Population::simulate(double br_thr, double ex_thr, uint32_t pairs, uint32_t generations, fitness_func f) {
-    selection(f, br_thr, ex_thr);
-    determine_breeding_phenotypes();
-
-    if (_breeding.size() < 2)
-        return;
-
-    Population newgen;
-    newgen._ppltn.reserve(pairs);
-
-    for (uint32_t i = 0; i < generations; i++) {
-        breed(pairs, newgen);
-        newgen.selection(f, br_thr, ex_thr);
-        index_t newgen_idx = _ppltn.size();
-        _ppltn.insert(_ppltn.end(), newgen._ppltn.cbegin(), newgen._ppltn.cend());
-        determine_breeding_phenotypes(newgen_idx);
-        newgen._ppltn.clear();
-    }
+Population &Population::operator+=(const Population &other) {
+    std::size_t prvlen = _data.size();
+    _data.insert(_data.end(), other._data.begin(), other._data.end());
+    auto first = _br.insert(_br.end(), other._br.begin(), other._br.end());
+    std::for_each(first, _br.end(), [&prvlen](Index& idx) { idx += prvlen; });
+    return *this;
 }
 
 
-void Population::selection(fitness_func f, const double& br_thr, const double& ex_thr) {
+Population &Population::operator+=(const PopulationVec &range) {
+    std::size_t prevlen = _data.size();
+    _data.insert(_data.end(), range.begin(), range.end());
+    determine_breeding_phenotypes(prevlen);
+    return *this;
+}
+
+
+Population& Population::append(const Population& other)
+{ return *this += other; }
+
+
+Population& Population::append(const PopulationVec& range)
+{ return *this += range; }
+
+
+Population Population::operator+(const Population &other) const {
+    Population newp = *this;
+    newp += other;
+    return newp;
+}
+
+
+Population Population::operator+(const PopulationVec &range) const {
+    Population newp = *this;
+    newp += range;
+    return newp;
+}
+
+
+void Population::perform_selection(FitnessFunction f, const double &br_thr, const double &ex_thr)
+{
     double ftns;
-    for (auto& indv : _ppltn) {
+    for (auto& indv : _data) {
         ftns = f(indv.genome());
 
         if (ftns > br_thr)
-            indv = adapt::breed;
+            indv.adapt(Adapt::breed);
         else if (ftns >= ex_thr)
-            indv = adapt::nobreed;
+            indv.adapt(Adapt::nobreed);
         else
-            indv = adapt::dead;
+            indv.adapt(Adapt::dead);
     }
 
-    std::erase_if(_ppltn, [](const Phenotype& p) -> bool { return adapt::dead == p.adapt(); });
+    std::erase_if(_data, [](const Phenotype& p) -> bool { return Adapt::dead == p.adapt(); });
 }
 
 
-void Population::breed(uint32_t n, Population& ng) const {
+void Population::perform_breeding(std::size_t pairs, Population& other) const {
     static std::default_random_engine rand(std::chrono::system_clock::now().time_since_epoch().count());
-    std::uniform_int_distribution<std::size_t> range(0, _breeding.size() - 1);
+    std::uniform_int_distribution<std::size_t> range(0, _br.size() - 1);
 
-    for (uint32_t i = 0; i < n; i++) {
-        index_t first = _breeding[range(rand)];
-        index_t second = _breeding[range(rand)];
+    for (auto i = 0; i < pairs; i++) {
+        Index first = _br[range(rand)];
+        Index second = _br[range(rand)];
 
         if (first == second) {
             i--;
             continue;
         }
 
-        ng._ppltn.emplace_back(_ppltn[first].frac_front(), _ppltn[second].frac_back());
+        other._data.emplace_back(_data[first].frac_front(), _data[second].frac_back());
     }
 }
 
 
-void Population::determine_breeding_phenotypes(index_t first_ph) {
-    for (auto i = first_ph; i < _ppltn.size(); i++)
-        if (adapt::breed == _ppltn[i].adapt())
-            _breeding.push_back(i);
-}
+Population Population::perform_breeding(std::size_t pairs) const {
+    static std::default_random_engine rand(std::chrono::system_clock::now().time_since_epoch().count());
+    std::uniform_int_distribution<std::size_t> range(0, _br.size() - 1);
 
+    Population newp;
 
-void read_population(std::ifstream& file, Population& p) {
-    if (!file) throw 10;
+    for (auto i = 0; i < pairs; i++) {
+        Index first = _br[range(rand)];
+        Index second = _br[range(rand)];
 
-    std::string genome;
-    while (std::getline(file, genome))
-        if (not genome.empty() /* && regex */)
-            p._ppltn.emplace_back(genome);
-}
+        if (first == second) {
+            i--;
+            continue;
+        }
 
-
-void read_population(const std::filesystem::path& path, Population& p) {
-    std::ifstream __file(path);
-    read_population(__file, p);
-    __file.close();
-}
-
-
-void write_population(std::ofstream& file, const Population& p) {
-    if (!file) throw 10;
-
-    for (const Phenotype& i : p._ppltn) {
-        for (gene_t g : i.genome())
-            file << g << ' ';
-        file << '\n';
+        newp._data.emplace_back(_data[first].frac_front(), _data[second].frac_back());
     }
+
+    return newp;
 }
 
 
-void write_population(const std::filesystem::path& path, const Population& p) {
-    std::ofstream __file(path);
-    write_population(__file, p);
-    __file.close();
+void Population::determine_breeding_phenotypes(Index first_ph) {
+    for (auto i = first_ph; i < _data.size(); i++)
+        if (Adapt::breed == _data[i].adapt())
+            _br.push_back(i);
 }
