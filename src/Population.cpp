@@ -58,12 +58,12 @@ void Population::perform_selection(FitnessFunction f, const double &br_thr, cons
     for (auto& indv : _data) {
         ftns = f(indv.genome());
 
-        if (ftns > br_thr)
-            indv.adapt(Adapt::breed);
-        else if (ftns >= ex_thr)
-            indv.adapt(Adapt::nobreed);
-        else
+        if (ftns < ex_thr)
             indv.adapt(Adapt::dead);
+        else if (ftns > br_thr)
+            indv.adapt(Adapt::breed);
+        else
+            indv.adapt(Adapt::nobreed);
     }
 
     std::erase_if(_data, [](const Phenotype& p) -> bool { return Adapt::dead == p.adapt(); });
